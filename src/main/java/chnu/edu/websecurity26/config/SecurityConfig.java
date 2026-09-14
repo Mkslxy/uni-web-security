@@ -1,4 +1,4 @@
-package com.example.uniwebsecurity.config;
+package chnu.edu.websecurity26.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,7 +23,7 @@ public class SecurityConfig {
         http
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/api/public/**", "/error").permitAll()
+                .requestMatchers("/", "/index.html", "/api/public/**", "/error").permitAll()
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .requestMatchers("/api/secure/**").hasAnyRole("USER", "ADMIN")
                 .anyRequest().authenticated()

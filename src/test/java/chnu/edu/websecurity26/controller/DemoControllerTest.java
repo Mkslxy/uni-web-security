@@ -1,10 +1,9 @@
-package com.example.uniwebsecurity.controller;
+package chnu.edu.websecurity26.controller;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
@@ -25,6 +24,12 @@ class DemoControllerTest {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.status").value("success"))
             .andExpect(jsonPath("$.framework").value("Spring Boot 4.1"));
+    }
+
+    @Test
+    void indexHtmlShouldBeAccessibleWithoutAuth() throws Exception {
+        mockMvc.perform(get("/index.html"))
+            .andExpect(status().isOk());
     }
 
     @Test
