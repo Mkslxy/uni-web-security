@@ -1,0 +1,34 @@
+### 1. Отримати всі елементи (GET all)
+GET http://localhost:8080/api/v1/items
+Accept: application/json
+
+### 2. Отримати елемент за ID (GET by ID)
+GET http://localhost:8080/api/v1/items/1
+Accept: application/json
+
+### 3. Створити новий елемент (POST create)
+POST http://localhost:8080/api/v1/items
+Content-Type: application/json
+
+{
+  "id": "4",
+  "name": "name4",
+  "description": "description4"
+}
+
+### 4. Оновити елемент (PUT update)
+PUT http://localhost:8080/api/v1/items
+Content-Type: application/json
+
+{
+  "id": "1",
+  "name": "name1-updated",
+  "description": "description1-updated"
+}
+
+### 5. Видалити елемент за ID (DELETE by ID)
+DELETE http://localhost:8080/api/v1/items/4
+
+### 6. Перевірити, що елемент видалено
+GET http://localhost:8080/api/v1/items/4
+Accept: application/json
