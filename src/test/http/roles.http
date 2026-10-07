@@ -1,0 +1,126 @@
+@baseUrl = http://localhost:8080
+@itemId = 1
+@adminAuth = YWRtaW46YWRtaW4=
+@userAuth = dXNlcjp1c2Vy
+@superadminAuth = c3VwZXJhZG1pbjpzdXBlcmFkbWlu
+
+### 1. ADMIN creates an item -> 200 OK
+POST {{baseUrl}}/api/v1/items
+Content-Type: application/json
+Authorization: Basic {{adminAuth}}
+
+{
+  "id": "10",
+  "name": "item10",
+  "description": "description10"
+}
+
+> {%
+client.test("1. ADMIN creates item - Status is 200", function() {
+    client.assert(response.status === 200, "Response status is not 200");
+});
+%}
+
+### 2. USER lists items -> 200 OK
+GET {{baseUrl}}/api/v1/items
+Authorization: Basic {{userAuth}}
+
+> {%
+client.test("2. USER lists items - Status is 200", function() {
+    client.assert(response.status === 200, "Response status is not 200");
+});
+%}
+
+### 3. USER reads one item -> 200 OK
+GET {{baseUrl}}/api/v1/items/{{itemId}}
+Authorization: Basic {{userAuth}}
+
+> {%
+client.test("3. USER reads one item - Status is 200", function() {
+    client.assert(response.status === 200, "Response status is not 200");
+});
+%}
+
+### 4. USER tries to create an item -> 403 Forbidden
+POST {{baseUrl}}/api/v1/items
+Content-Type: application/json
+Authorization: Basic {{userAuth}}
+
+{
+  "id": "20",
+  "name": "item20",
+  "description": "forbidden"
+}
+
+> {%
+client.test("4. USER cannot create item - Status is 403", function() {
+    client.assert(response.status === 403, "Response status is not 403");
+});
+%}
+
+### 5. ADMIN updates an item -> 200 OK
+PUT {{baseUrl}}/api/v1/items
+Content-Type: application/json
+Authorization: Basic {{adminAuth}}
+
+{
+  "id": "10",
+  "name": "item10-updated",
+  "description": "updated-description"
+}
+
+> {%
+client.test("5. ADMIN updates item - Status is 200", function() {
+    client.assert(response.status === 200, "Response status is not 200");
+});
+%}
+
+### 6. USER tries to delete an item -> 403 Forbidden
+DELETE {{baseUrl}}/api/v1/items/10
+Authorization: Basic {{userAuth}}
+
+> {%
+client.test("6. USER cannot delete item - Status is 403", function() {
+    client.assert(response.status === 403, "Response status is not 403");
+});
+%}
+
+### 7. ADMIN deletes an item -> 200 OK
+DELETE {{baseUrl}}/api/v1/items/10
+Authorization: Basic {{adminAuth}}
+
+> {%
+client.test("7. ADMIN deletes item - Status is 200", function() {
+    client.assert(response.status === 200, "Response status is not 200");
+});
+%}
+
+### 8. ADMIN accesses admin-only endpoint -> 200 OK
+GET {{baseUrl}}/api/admin/hello
+Authorization: Basic {{adminAuth}}
+
+> {%
+client.test("8. ADMIN accesses admin endpoint - Status is 200", function() {
+    client.assert(response.status === 200, "Response status is not 200");
+});
+%}
+
+### 9. USER tries to access admin-only endpoint -> 403 Forbidden
+GET {{baseUrl}}/api/admin/hello
+Authorization: Basic {{userAuth}}
+
+> {%
+client.test("9. USER cannot access admin endpoint - Status is 403", function() {
+    client.assert(response.status === 403, "Response status is not 403");
+});
+%}
+
+### 10. SUPERADMIN accesses superadmin-only endpoint -> 200 OK
+GET {{baseUrl}}/api/superadmin/hello
+Authorization: Basic {{superadminAuth}}
+
+> {%
+client.test("10. SUPERADMIN accesses superadmin endpoint - Status is 200", function() {
+    client.assert(response.status === 200, "Response status is not 200");
+});
+%}
