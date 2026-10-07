@@ -1,6 +1,6 @@
-# web-security26 — Лабораторна робота №3
+# web-security26 — Лабораторна робота №4
 
-Лабораторна робота з веб-безпеки: **Базова автентифікація (HTTP Basic Authentication) та захист REST API**.
+Лабораторна робота з веб-безпеки: **Захист REST API за допомогою Basic Authentication та виконання 5 CRUD HTTP-запитів**.
 
 * **Автор:** oleksii
 * **Дата:** 07.10.2026
@@ -19,18 +19,20 @@
 ## 🔒 Налаштування безпеки (Spring Security)
 
 1. **Конфігурація `SecurityConfig`**:
-   - Відключено захист від CSRF (`AbstractHttpConfigurer::disable`).
-   - Управління сесіями налаштовано у режимі без збереження стану (`SessionCreationPolicy.STATELESS`).
-   - Усі запити вимагають автентифікації (`anyRequest().authenticated()`).
-   - Увімкнено базову автентифікацію (`httpBasic`).
+   - Відключено CSRF (`AbstractHttpConfigurer::disable`).
+   - Режим сесій: без збереження стану (`SessionCreationPolicy.STATELESS`).
+   - Усі запити захищені (`anyRequest().authenticated()`).
+   - Базова автентифікація: `httpBasic(Customizer.withDefaults())`.
+   - Користувачі в пам'яті (`InMemoryUserDetailsManager`):
+     - `admin` / `admin` (ролі: `ADMIN`, `USER`)
+     - `user` / `password` (роль: `USER`)
 
 2. **Облікові дані (`application.properties`)**:
    ```properties
-   spring.security.user.name=user
-   spring.security.user.password=password
-   spring.security.user.roles=USER
+   spring.security.user.name=admin
+   spring.security.user.password=admin
+   spring.security.user.roles=ADMIN
    ```
-   Заголовок для запитів: `Authorization: Basic dXNlcjpwYXNzd29yZA==` (`user:password`).
 
 ---
 
@@ -42,32 +44,22 @@
 
 ---
 
-## 📡 HTTP-запити (`requests.http` / `src/test/http/crud.http`)
+## 📡 5 CRUD HTTP-запитів (`basic-authorization.http`)
 
-Підготовлено **10 HTTP-запитів** для тестування через HTTP Client (IntelliJ IDEA):
+Створено файл `basic-authorization.http` відповідно до вимог завдання:
 
-### Авторизовані запити (Basic Auth):
-| № | Операція | Метод | URL | Очікуваний статус |
-|---|---|---|---|---|
-| 1 | **Отримати всі** | `GET` | `/api/v1/items` | `200 OK` |
-| 2 | **Отримати за ID** | `GET` | `/api/v1/items/1` | `200 OK` |
-| 3 | **Створити** | `POST` | `/api/v1/items` | `200 OK` |
-| 4 | **Оновити** | `PUT` | `/api/v1/items` | `200 OK` |
-| 5 | **Видалити** | `DELETE` | `/api/v1/items/4` | `200 OK` |
-
-### Неавторизовані запити (No Auth):
-| № | Операція | Метод | URL | Очікуваний статус |
-|---|---|---|---|---|
-| 6 | **Отримати всі** | `GET` | `/api/v1/items` | `401 Unauthorized` |
-| 7 | **Отримати за ID** | `GET` | `/api/v1/items/1` | `401 Unauthorized` |
-| 8 | **Створити** | `POST` | `/api/v1/items` | `401 Unauthorized` |
-| 9 | **Оновити** | `PUT` | `/api/v1/items` | `401 Unauthorized` |
-| 10 | **Видалити** | `DELETE` | `/api/v1/items/1` | `401 Unauthorized` |
+| № | Операція | Метод | URL | Авторизація | Очікуваний статус |
+|---|---|---|---|---|---|
+| 1 | **Show all** | `GET` | `/api/v1/items` | `Basic admin admin` | `200 OK` |
+| 2 | **Read one** | `GET` | `/api/v1/items/2` | `Basic admin admin` | `200 OK` |
+| 3 | **Create one** | `POST` | `/api/v1/items` | `Basic admin admin` | `200 OK` |
+| 4 | **Update one** | `PUT` | `/api/v1/items` | `Basic admin admin` | `200 OK` |
+| 5 | **Delete one** | `DELETE` | `/api/v1/items/4` | `Basic admin admin` | `200 OK` |
 
 ---
 
 ## 🧪 Тестування
-Запуск модульних та інтеграційних тестів:
+Запуск тестів через Maven:
 ```powershell
 .\mvnw.cmd test
 ```

@@ -1,0 +1,41 @@
+###1. GET All items
+GET http://localhost:8080/api/v1/items
+Authorization: Basic admin admin
+Accept: application/json
+
+###
+###2. GET one item
+GET http://localhost:8080/api/v1/items/2
+Authorization: Basic admin admin
+Accept: application/json
+
+###
+###3. CREATE one item
+POST http://localhost:8080/api/v1/items
+Content-Type: application/json
+Authorization: Basic admin admin
+Accept: application/json
+
+{
+  "id": "4",
+  "name": "name4",
+  "description": "description4"
+}
+
+###
+###4. UPDATE one item
+PUT http://localhost:8080/api/v1/items
+Content-Type: application/json
+Authorization: Basic admin admin
+Accept: application/json
+
+{
+  "id": "1",
+  "name": "name1-updated",
+  "description": "description1-updated"
+}
+
+###
+###5. DELETE one item
+DELETE http://localhost:8080/api/v1/items/4
+Authorization: Basic admin admin

@@ -25,7 +25,7 @@ class ItemControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    private static final String AUTH_HEADER = "Basic dXNlcjpwYXNzd29yZA==";
+    private static final String AUTH_HEADER = "Basic YWRtaW46YWRtaW4=";
 
     @Test
     void shouldGetAllItems() throws Exception {
