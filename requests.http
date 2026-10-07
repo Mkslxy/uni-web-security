@@ -1,14 +1,23 @@
-### 1. Отримати всі елементи (GET all)
-GET http://localhost:8080/api/v1/items
-Accept: application/json
+@baseUrl = http://localhost:8080
+@itemId = 1
+@basicAuth = dXNlcjpwYXNzd29yZA==
 
-### 2. Отримати елемент за ID (GET by ID)
-GET http://localhost:8080/api/v1/items/1
-Accept: application/json
+### 1. GET ALL ITEMS (Basic Auth -> expect 200)
+GET {{baseUrl}}/api/v1/items
+Authorization: Basic {{basicAuth}}
 
-### 3. Створити новий елемент (POST create)
-POST http://localhost:8080/api/v1/items
+
+
+### 2. GET ONE ITEM (Basic Auth -> expect 200)
+GET {{baseUrl}}/api/v1/items/{{itemId}}
+Authorization: Basic {{basicAuth}}
+
+
+
+### 3. CREATE ONE ITEM (Basic Auth -> expect 200)
+POST {{baseUrl}}/api/v1/items
 Content-Type: application/json
+Authorization: Basic {{basicAuth}}
 
 {
   "id": "4",
@@ -16,8 +25,51 @@ Content-Type: application/json
   "description": "description4"
 }
 
-### 4. Оновити елемент (PUT update)
-PUT http://localhost:8080/api/v1/items
+
+
+### 4. UPDATE ONE ITEM (Basic Auth -> expect 200)
+PUT {{baseUrl}}/api/v1/items
+Content-Type: application/json
+Authorization: Basic {{basicAuth}}
+
+{
+  "id": "1",
+  "name": "name1-updated",
+  "description": "description1-updated"
+}
+
+
+
+### 5. DELETE ONE ITEM (Basic Auth -> expect 200)
+DELETE {{baseUrl}}/api/v1/items/4
+Authorization: Basic {{basicAuth}}
+
+
+
+### 6. GET ALL ITEMS - NO AUTH (expect 401)
+GET {{baseUrl}}/api/v1/items
+
+
+
+### 7. GET ONE ITEM - NO AUTH (expect 401)
+GET {{baseUrl}}/api/v1/items/{{itemId}}
+
+
+
+### 8. CREATE ONE ITEM - NO AUTH (expect 401)
+POST {{baseUrl}}/api/v1/items
+Content-Type: application/json
+
+{
+  "id": "5",
+  "name": "name5",
+  "description": "description5"
+}
+
+
+
+### 9. UPDATE ONE ITEM - NO AUTH (expect 401)
+PUT {{baseUrl}}/api/v1/items
 Content-Type: application/json
 
 {
@@ -26,9 +78,7 @@ Content-Type: application/json
   "description": "description1-updated"
 }
 
-### 5. Видалити елемент за ID (DELETE by ID)
-DELETE http://localhost:8080/api/v1/items/4
 
-### 6. Перевірити, що елемент видалено
-GET http://localhost:8080/api/v1/items/4
-Accept: application/json
+
+### 10. DELETE ONE ITEM - NO AUTH (expect 401)
+DELETE {{baseUrl}}/api/v1/items/{{itemId}}

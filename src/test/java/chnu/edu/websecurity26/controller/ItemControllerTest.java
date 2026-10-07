@@ -25,9 +25,12 @@ class ItemControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
+    private static final String AUTH_HEADER = "Basic dXNlcjpwYXNzd29yZA==";
+
     @Test
     void shouldGetAllItems() throws Exception {
-        mockMvc.perform(get("/api/v1/items"))
+        mockMvc.perform(get("/api/v1/items")
+                        .header("Authorization", AUTH_HEADER))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$").isArray());
@@ -35,7 +38,8 @@ class ItemControllerTest {
 
     @Test
     void shouldGetItemById() throws Exception {
-        mockMvc.perform(get("/api/v1/items/1"))
+        mockMvc.perform(get("/api/v1/items/1")
+                        .header("Authorization", AUTH_HEADER))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value("1"))
                 .andExpect(jsonPath("$.name").value("name1"));
@@ -52,6 +56,7 @@ class ItemControllerTest {
                 """;
 
         mockMvc.perform(post("/api/v1/items")
+                        .header("Authorization", AUTH_HEADER)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(newItemJson))
                 .andExpect(status().isOk())
@@ -70,6 +75,7 @@ class ItemControllerTest {
                 """;
 
         mockMvc.perform(put("/api/v1/items")
+                        .header("Authorization", AUTH_HEADER)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updateJson))
                 .andExpect(status().isOk())
@@ -79,11 +85,35 @@ class ItemControllerTest {
 
     @Test
     void shouldDeleteItem() throws Exception {
-        mockMvc.perform(delete("/api/v1/items/3"))
+        mockMvc.perform(delete("/api/v1/items/3")
+                        .header("Authorization", AUTH_HEADER))
                 .andExpect(status().isOk());
 
-        mockMvc.perform(get("/api/v1/items/3"))
+        mockMvc.perform(get("/api/v1/items/3")
+                        .header("Authorization", AUTH_HEADER))
                 .andExpect(status().isOk())
                 .andExpect(content().string(""));
+    }
+
+    @Test
+    void shouldReturnUnauthorizedWhenNoAuth() throws Exception {
+        mockMvc.perform(get("/api/v1/items"))
+                .andExpect(status().isUnauthorized());
+
+        mockMvc.perform(get("/api/v1/items/1"))
+                .andExpect(status().isUnauthorized());
+
+        mockMvc.perform(post("/api/v1/items")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"id\":\"999\",\"name\":\"unauthorized\",\"description\":\"test\"}"))
+                .andExpect(status().isUnauthorized());
+
+        mockMvc.perform(put("/api/v1/items")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"id\":\"1\",\"name\":\"unauthorized\",\"description\":\"test\"}"))
+                .andExpect(status().isUnauthorized());
+
+        mockMvc.perform(delete("/api/v1/items/1"))
+                .andExpect(status().isUnauthorized());
     }
 }
