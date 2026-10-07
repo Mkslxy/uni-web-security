@@ -6,13 +6,21 @@
 GET {{baseUrl}}/api/v1/items
 Authorization: Basic {{basicAuth}}
 
-
+> {%
+client.test("1. GET ALL - Status is 200", function() {
+    client.assert(response.status === 200, "Response status is not 200");
+});
+%}
 
 ### 2. GET ONE ITEM (Basic Auth -> expect 200)
 GET {{baseUrl}}/api/v1/items/{{itemId}}
 Authorization: Basic {{basicAuth}}
 
-
+> {%
+client.test("2. GET ONE - Status is 200", function() {
+    client.assert(response.status === 200, "Response status is not 200");
+});
+%}
 
 ### 3. CREATE ONE ITEM (Basic Auth -> expect 200)
 POST {{baseUrl}}/api/v1/items
@@ -25,7 +33,11 @@ Authorization: Basic {{basicAuth}}
   "description": "description4"
 }
 
-
+> {%
+client.test("3. CREATE - Status is 200", function() {
+    client.assert(response.status === 200, "Response status is not 200");
+});
+%}
 
 ### 4. UPDATE ONE ITEM (Basic Auth -> expect 200)
 PUT {{baseUrl}}/api/v1/items
@@ -38,23 +50,39 @@ Authorization: Basic {{basicAuth}}
   "description": "description1-updated"
 }
 
-
+> {%
+client.test("4. UPDATE - Status is 200", function() {
+    client.assert(response.status === 200, "Response status is not 200");
+});
+%}
 
 ### 5. DELETE ONE ITEM (Basic Auth -> expect 200)
 DELETE {{baseUrl}}/api/v1/items/4
 Authorization: Basic {{basicAuth}}
 
-
+> {%
+client.test("5. DELETE - Status is 200", function() {
+    client.assert(response.status === 200, "Response status is not 200");
+});
+%}
 
 ### 6. GET ALL ITEMS - NO AUTH (expect 401)
 GET {{baseUrl}}/api/v1/items
 
-
+> {%
+client.test("6. GET ALL NO AUTH - Status is 401", function() {
+    client.assert(response.status === 401, "Response status is not 401");
+});
+%}
 
 ### 7. GET ONE ITEM - NO AUTH (expect 401)
 GET {{baseUrl}}/api/v1/items/{{itemId}}
 
-
+> {%
+client.test("7. GET ONE NO AUTH - Status is 401", function() {
+    client.assert(response.status === 401, "Response status is not 401");
+});
+%}
 
 ### 8. CREATE ONE ITEM - NO AUTH (expect 401)
 POST {{baseUrl}}/api/v1/items
@@ -66,7 +94,11 @@ Content-Type: application/json
   "description": "description5"
 }
 
-
+> {%
+client.test("8. CREATE NO AUTH - Status is 401", function() {
+    client.assert(response.status === 401, "Response status is not 401");
+});
+%}
 
 ### 9. UPDATE ONE ITEM - NO AUTH (expect 401)
 PUT {{baseUrl}}/api/v1/items
@@ -78,7 +110,17 @@ Content-Type: application/json
   "description": "description1-updated"
 }
 
-
+> {%
+client.test("9. UPDATE NO AUTH - Status is 401", function() {
+    client.assert(response.status === 401, "Response status is not 401");
+});
+%}
 
 ### 10. DELETE ONE ITEM - NO AUTH (expect 401)
 DELETE {{baseUrl}}/api/v1/items/{{itemId}}
+
+> {%
+client.test("10. DELETE NO AUTH - Status is 401", function() {
+    client.assert(response.status === 401, "Response status is not 401");
+});
+%}
