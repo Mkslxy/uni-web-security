@@ -1,0 +1,123 @@
+@baseUrl = http://localhost:8080
+@itemId = 1
+
+### 1. ADMIN creates an item -> 200 OK (@PreAuthorize("hasRole('ADMIN')") on POST /api/v1/items)
+POST {{baseUrl}}/api/v1/items
+Content-Type: application/json
+Authorization: Basic admin admin
+
+{
+  "id": "10",
+  "name": "name10",
+  "description": "description10"
+}
+
+> {%
+client.test("1. ADMIN creates item - Status is 200", function() {
+    client.assert(response.status === 200, "Expected 200 OK");
+});
+%}
+
+### 2. USER lists items -> 200 OK (@PreAuthorize("hasAnyRole('USER','ADMIN')") on GET /api/v1/items)
+GET {{baseUrl}}/api/v1/items
+Authorization: Basic user user
+
+> {%
+client.test("2. USER lists items - Status is 200", function() {
+    client.assert(response.status === 200, "Expected 200 OK");
+});
+%}
+
+### 3. SUPERADMIN lists items -> 403 Forbidden (no USER/ADMIN role, denied by annotation)
+GET {{baseUrl}}/api/v1/items
+Authorization: Basic superadmin superadmin
+
+> {%
+client.test("3. SUPERADMIN cannot list items - Status is 403", function() {
+    client.assert(response.status === 403, "Expected 403 Forbidden");
+});
+%}
+
+### 4. ADMIN reads one item -> 200 OK (@PreAuthorize("hasAnyRole('USER','ADMIN')") on GET /api/v1/items/{id})
+GET {{baseUrl}}/api/v1/items/{{itemId}}
+Authorization: Basic admin admin
+
+> {%
+client.test("4. ADMIN reads one item - Status is 200", function() {
+    client.assert(response.status === 200, "Expected 200 OK");
+});
+%}
+
+### 5. USER tries to update an item -> 403 Forbidden (@PreAuthorize("hasRole('ADMIN')") on PUT /api/v1/items)
+PUT {{baseUrl}}/api/v1/items
+Content-Type: application/json
+Authorization: Basic user user
+
+{
+  "id": "10",
+  "name": "name10-hacked",
+  "description": "description10-hacked"
+}
+
+> {%
+client.test("5. USER cannot update item - Status is 403", function() {
+    client.assert(response.status === 403, "Expected 403 Forbidden");
+});
+%}
+
+### 6. ADMIN updates an item -> 200 OK
+PUT {{baseUrl}}/api/v1/items
+Content-Type: application/json
+Authorization: Basic admin admin
+
+{
+  "id": "10",
+  "name": "name10-updated",
+  "description": "description10-updated"
+}
+
+> {%
+client.test("6. ADMIN updates item - Status is 200", function() {
+    client.assert(response.status === 200, "Expected 200 OK");
+});
+%}
+
+### 7. USER tries to delete an item -> 403 Forbidden (@PreAuthorize("hasRole('ADMIN')") on DELETE /api/v1/items/{id})
+DELETE {{baseUrl}}/api/v1/items/10
+Authorization: Basic user user
+
+> {%
+client.test("7. USER cannot delete item - Status is 403", function() {
+    client.assert(response.status === 403, "Expected 403 Forbidden");
+});
+%}
+
+### 8. ADMIN accesses admin-only route -> 200 OK (class-level @PreAuthorize("hasRole('ADMIN')") on AdminController)
+GET {{baseUrl}}/api/admin/hello
+Authorization: Basic admin admin
+
+> {%
+client.test("8. ADMIN accesses admin endpoint - Status is 200", function() {
+    client.assert(response.status === 200, "Expected 200 OK");
+});
+%}
+
+### 9. USER accesses admin-only route -> 403 Forbidden
+GET {{baseUrl}}/api/admin/hello
+Authorization: Basic user user
+
+> {%
+client.test("9. USER cannot access admin endpoint - Status is 403", function() {
+    client.assert(response.status === 403, "Expected 403 Forbidden");
+});
+%}
+
+### 10. SUPERADMIN accesses superadmin-only route -> 200 OK (class-level @PreAuthorize("hasRole('SUPERADMIN')") on SuperAdminController)
+GET {{baseUrl}}/api/superadmin/hello
+Authorization: Basic superadmin superadmin
+
+> {%
+client.test("10. SUPERADMIN accesses superadmin endpoint - Status is 200", function() {
+    client.assert(response.status === 200, "Expected 200 OK");
+});
+%}
