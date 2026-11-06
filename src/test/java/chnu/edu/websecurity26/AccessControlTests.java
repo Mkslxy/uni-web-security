@@ -12,6 +12,8 @@ import chnu.edu.websecurity26.config.SecurityConfig;
 import chnu.edu.websecurity26.controller.AdminController;
 import chnu.edu.websecurity26.controller.ItemController;
 import chnu.edu.websecurity26.controller.SuperAdminController;
+import chnu.edu.websecurity26.jwt.JwtAuthenticationFilter;
+import chnu.edu.websecurity26.jwt.JwtService;
 import chnu.edu.websecurity26.model.Item;
 import chnu.edu.websecurity26.service.ItemService;
 import org.junit.jupiter.api.Test;
@@ -38,7 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * admin / user / superadmin accounts declared in {@link SecurityConfig}.
  */
 @WebMvcTest(controllers = {ItemController.class, AdminController.class, SuperAdminController.class})
-@Import(SecurityConfig.class)
+@Import({SecurityConfig.class, JwtAuthenticationFilter.class, JwtService.class})
 class AccessControlTests {
 
     @Autowired

@@ -1,9 +1,9 @@
-# web-security26 — Лабораторна робота №8
+# web-security26 — Лабораторна робота №9
 
-Лабораторна робота з веб-безпеки: **Генерація JWT-токенів та ендпоинт автентифікації (`POST /api/v1/auth/authenticate`)**.
+Лабораторна робота з веб-безпеки: **Перевірка прав доступу за допомогою JWT Bearer-токенів (`JwtAuthenticationFilter`)**.
 
 * **Автор:** oleksii
-* **Дата:** 01.11.2026
+* **Дата:** 05.11.2026
 
 ---
 
@@ -15,17 +15,11 @@
 
 ---
 
-## 🔐 JWT Автентифікація
+## 🔐 Контроль доступу через JWT Bearer-токени
 
-1. **`JwtService`**: генерує підписаний JWT (HS512) із `subject` = ім'я користувача та `claim("authorities", ...)` = список ролей (`ROLE_ADMIN`, `ROLE_USER`, `ROLE_SUPERADMIN`).
-2. **`AuthenticationService` & `AuthenticationController`**: приймає `POST /api/v1/auth/authenticate` з JSON `{ "username": "...", "password": "..." }`, виконує перевірку через `AuthenticationManager` і повертає `{ "token": "<JWT>" }`.
-3. **`SecurityConfig`**: відкрито доступ `.requestMatchers("/api/v1/auth/**").permitAll()` та зареєстровано бін `AuthenticationManager`.
-
----
-
-## 📡 HTTP-запити (`auth.http`)
-
-У файлі `auth.http` (та `src/test/http/auth.http`) підготовлено запити для отримання JWT-токенів для всіх трьох ролей (`admin`, `user`, `superadmin`).
+1. **`JwtAuthenticationFilter`**: фільтр `OncePerRequestFilter`, зареєстрований перед `UsernamePasswordAuthenticationFilter`. Перевіряє заголовок `Authorization: Bearer <token>`, валідує підпис і термін дії токена через `JwtService`, завантажує користувача через `UserDetailsService` і встановлює автентифікацію в `SecurityContextHolder`.
+2. **`JwtService`**: додано методи `extractUsername`, `extractClaim`, `isTokenValid` та декодування секретного ключа через `Decoders.BASE64`.
+3. **20 HTTP-запитів (`jwt-access.http` та `src/test/http/jwt-access.http`)**: покривають логін для `admin`, `user`, `superadmin` та перевірку доступу з Bearer-токенами до `/api/v1/items`, `/api/admin/hello`, `/api/superadmin/hello`.
 
 ---
 
